@@ -8,3 +8,11 @@ button {
     padding: 10px 20px;
     cursor: pointer;
 }
+.middleOfScreen {
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    left: 50%;
+    right: 50%;
+    background-color: blue;
+}
