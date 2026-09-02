@@ -1,27 +1,48 @@
-
 var i = 0;
 var speed = 50;
-function askQuestion() {
-    var txt = 'Hello, I am your AMA bot. Ask me anything and I will answer you.';
-  if (i < txt.length) {
-    document.getElementById("response").innerHTML += txt.charAt(i);
-    i++;
-    setTimeout(askQuestion, speed);
-  }
+
+async function askQuestion() {
+    var userInput = document.getElementById("userInput").value;
+    if (userInput.trim() === "") {
+        return;
+    }
+
+    var responseLabel = document.getElementById("response");
+
+    addQuestionToList(userInput);
+
+    const response = await fetch('/ask', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ question: userInput })
+    });
+
+    const data = await response.json();
+
+    typeWriter(data.answer, responseLabel);
+
+    document.getElementById("userInput").value = "";
+
 }
 
-function addQuestionToList() {
-    var userInput = document.getElementById("userInput").value;
+function typeWriter(txt, responseLabel) {
+    var i = 0;
+    function write() {
+        if (i < txt.length) {
+            responseLabel.textContent += txt.charAt(i);
+            i++;
+            setTimeout(write, speed);
+        }
+    }
+
+    write();
+}
+
+function addQuestionToList(question) {
     var questionList = document.getElementById("questionList");
     var newQuestion = document.createElement("li");
-    newQuestion.textContent = userInput;
+    newQuestion.textContent = question;
     questionList.appendChild(newQuestion);
-}
-
-function respondToQuestion() {
-    var userInput = document.getElementById("userInput").value;
-    var responseLabel = document.getElementById("response");
-    // Here you can implement your logic to generate a response based on the user's question
-    var response = "You asked: " + userInput;
-    responseLabel.textContent = response;
 }
