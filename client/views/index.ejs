@@ -1,0 +1,39 @@
+<html>
+
+<head>
+    <title>My ama bot</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>My AMA Bot</h1>
+    <p id="response"></p>
+    <ul id="questionList"></ul>
+    
+    <form id="questionForm" method="POST" action="/ask">
+        <input type="text" id="userInput" name="question" placeholder="Ask me anything...">
+        <button type="submit">Ask</button>
+    </form>
+
+    <% if (error) { %>
+        <h3>fyfy</h3>
+        <p><%= error %></p>
+    <% } %>
+
+    <% if (question) { %>
+        <h3>You asked:</h3>
+        <p><%= question %></p>
+    <% } %>
+
+
+    <% if (answer) { %>
+        <h3>Answer:</h3>
+        <p><%= answer %></p>
+    <% } %>
+
+
+
+</body>
+
+</html>
