@@ -116,4 +116,14 @@ button:active {
     color: #444;
 }
 
+.message.question {
+    font-weight: bold;
+}
+.question {
+    font-weight: bold;
+}
+.answer {
+    color: #4f46e5;
+}
+
 ```
