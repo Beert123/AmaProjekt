@@ -31,12 +31,12 @@ function countMatches(keywords, normalizedQuestion) {
     });
     return matches.length;
 }
+
 function findBestAnswer(question) {
     const normalizedQuestion = question.toLowerCase();
     let bestScore = 0;
     let bestAns = "Intet svar";
     let bestCategory = "";
-
     for (const answerGroup of answers) {
         const currScore = countMatches(answerGroup.keywords, normalizedQuestion);
         if (currScore > bestScore) {
@@ -61,7 +61,7 @@ const topicStats = {
 
 // Endpoint to get the answers
 server.get("/", (req, res) => {
-    res.render("index", { messageList, error: "" });
+    res.render("index", { messageList, error: "", topicStats });
 });
 
 server.post('/ask', (req, res) => {
@@ -72,11 +72,16 @@ server.post('/ask', (req, res) => {
         error = "skriv et spørgsmål nørd";
     } else {
         const result = findBestAnswer(question);
-        console.log(answer);
+        console.log(result);
         messageList.push({ type: "question", text: question });
         messageList.push({ type: "answer", text: result.answer })
+        if (result.category) {
+            topicStats[result.category] = topicStats[result.category] + 1;
+        }
+        console.log(topicStats);
     }
-    res.render("index", { messageList, error });
+
+    res.render("index", { messageList, error, topicStats });
 });
 
 server.post('/clearMessages', (req, res) => {
