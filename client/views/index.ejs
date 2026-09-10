@@ -15,24 +15,19 @@
         <input type="text" id="userInput" name="question" placeholder="Ask me anything...">
         <button type="submit">Ask</button>
     </form>
+    <form method="POST" action="/clearMessages">
+        <button type="submit">Clear Messages</button>
+    </form>
+
+    <% for (const message of messageList) { %>
+        <article class="<%= message.type %>">
+            <p><%= message.text %></p>
+        </article>
+    <% } %>
 
     <% if (error) { %>
-        <h3>fyfy</h3>
-        <p><%= error %></p>
+        <p role="alert"><%= error %></p>
     <% } %>
-
-    <% if (question) { %>
-        <h3>You asked:</h3>
-        <p><%= question %></p>
-    <% } %>
-
-
-    <% if (answer) { %>
-        <h3>Answer:</h3>
-        <p><%= answer %></p>
-    <% } %>
-
-
 
 </body>
 
