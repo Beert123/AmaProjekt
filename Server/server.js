@@ -60,7 +60,7 @@ function findMostCommonSubject(stats){
             highestStat = topic;
         }
     }
-    return topic;
+    return highestStat;
 }
 
 const messageList = [];
