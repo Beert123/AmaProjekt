@@ -51,17 +51,18 @@ function findBestAnswer(question) {
     };
 }
 
-function findMostCommonSubject(stats){
+function findMostCommonSubject(stats) {
     let highestStat = "";
     let mostCommon = 0;
-    for (const [topic, count] of Object.entries(stats)){
-        if(count > mostCommon){
+    for (const [topic, count] of Object.entries(stats)) {
+        if (count > mostCommon) {
             mostCommon = count;
             highestStat = topic;
         }
     }
     return highestStat;
 }
+
 
 const messageList = [];
 

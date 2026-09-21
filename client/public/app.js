@@ -1,47 +1,26 @@
-var speed = 50;
 
-async function askQuestion() {
-    var userInput = document.getElementById("userInput").value;
-    if (userInput.trim() === "") {
-        return;
+let stringLength = "";
+let input = document.querySelector('input')
+let charCounter = document.getElementById("char-count");
+
+input.addEventListener('input', function (event) {
+    stringLength = event.target.value.length;
+    charCounter.innerHTML = stringLength;
+    if (stringLength >= 10 && stringLength <= 20){
+        charCounter.classList.toggle('warning');
     }
-
-    var responseLabel = document.getElementById("response");
-
-    addQuestionToList(userInput);
-
-    const response = await fetch('/ask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ question: userInput })
-    });
-
-    const data = await response.json();
-
-    typeWriter(data.answer, responseLabel);
-
-    document.getElementById("userInput").value = "";
-
-}
-
-function typeWriter(txt, responseLabel) {
-    var i = 0;
-    function write() {
-        if (i < txt.length) {
-            responseLabel.textContent += txt.charAt(i);
-            i++;
-            setTimeout(write, speed);
-        }
+    else if(stringLength >= 20 && stringLength <= 30 ){
+        charCounter.style.color = "red";
     }
+    else{
+        charCounter.style.color = "black";
+    }
+    console.log('Value:', stringLength)
+})
 
-    write();
-}
-
-function addQuestionToList(question) {
-    var questionList = document.getElementById("questionList");
-    var newQuestion = document.createElement("li");
-    newQuestion.textContent = question;
-    questionList.appendChild(newQuestion);
-}
+let form = document.querySelector('form')
+form.addEventListener('submit', function (event) {
+    event.preventDefault() // Stop form submission
+    console.log('Form blev submittet')
+    console.log('Form data:', new FormData(form))
+})
