@@ -17,10 +17,11 @@ input.addEventListener('input', function (event) {
     }
     console.log('Value:', stringLength)
 })
-
+/*
 let form = document.querySelector('form')
 form.addEventListener('submit', function (event) {
     event.preventDefault() // Stop form submission
     console.log('Form blev submittet')
     console.log('Form data:', new FormData(form))
 })
+    */
