@@ -1,20 +1,14 @@
 import express from 'express';
 import cors from "cors";
-import path from 'path';
 import { answers } from './Data/data.js';
 import fs from "node:fs/promises";
 
 const server = express();
 const port = 3000;
 
-server.set("views", path.join(import.meta.dirname, "../Client/views"));
-server.set("view engine", "ejs");
-
-server.use(express.urlencoded({ extended: true }));
-
 server.use(cors());
 server.use(express.json());
-server.use(express.static(path.join(import.meta.dirname, '../client/public')));
+
 
 function findAnswer(question) {
     const normalizedQuestion = question.toLowerCase();
@@ -83,48 +77,81 @@ async function saveTopicStats(topics){
     const json = await JSON.stringify(topics,null,2);
     await fs.writeFile("./data/topicStats.json", json);
 }
+
+async function loadAnswers(){
+    const data = await fs.readFile("./data/answers.json", "utf8");
+    return JSON.parse(data);
+}
+async function saveAnswers (answers) {
+    const json = JSON.stringify(answers,null,2);
+    await fs.writeFile("./data/answers.json", json);
+}
 // Endpoint to get the answers
-server.get("/", async (req, res) => {
-    const messages = await loadMessages();
-    const topics = await loadTopicStats();
-    res.render("index", { messages, error: "", topics });
+
+server.get("/messages", async (req, res) => {
+  const messages = await loadMessages();
+  res.json(messages);
 });
 
-server.post('/ask', async (req, res) => {
-    const messages = await loadMessages();
-    const topics = await loadTopicStats();
-
-    const question = req.body.question;
-    let error = "";
-    if (!question) {
-        error = "skriv et spørgsmål nørd";
-    } else {
-        const result = findBestAnswer(question);
-        console.log(result);
-        messages.push({ type: "question", text: question });
-        messages.push({ type: "answer", text: result.answer })
-        if (result.category) {
-            topics[result.category] = topics[result.category] + 1;
-        }
-        console.log(topics);
-    }
-    await saveMessages(messages);
-    await saveTopicStats(topics);
-
-    res.render("index", { messages, error, topics });
+server.get("/answers", async (req, res) =>{
+    const answers = await loadAnswers();
+    res.json(answers);
 });
 
-server.post('/clearMessages', async (req, res) => {
-    const messages = await loadMessages();
-    const topics = await loadTopicStats();
+server.get("/answers/:category", async (req, res)=>{
+    const answers = await loadAnswers();
+    const findAns = answers.find((answer) => answer.category === req.params.category);
+    res.json(findAns);
+})
+
+server.post("/answers", async (req, res) =>{
+    const answers = await loadAnswers();
+    
+    const newRule = {category: req.body.category, keywords: req.body.keywords, answer: req.body.answer}
+    answers.push(newRule);
+    await saveAnswers(answers);
+    res.json(newRule);
+})
+
+server.post("/messages", async (req, res) => {
+  const messages = await loadMessages();
+  const question = req.body.question.trim();
+  if(!question){
+    res.json({error: "FEJL FEJL FEJL"});
+    return;
+  }
+  const qmsg = {type: "question", text: question, createdAt: new Date().toISOString() }
+  messages.push(qmsg);
+
+  let answer = findBestAnswer(question);
+  const answerMsg = {type: "answer", text: answer, createdAt: new Date().toISOString()}
+  messages.push(answerMsg);
+
+  await saveMessages(messages);
+
+  res.json({question: qmsg, answer: answerMsg});
+});
+
+server.put("/answers/:category", async (req,res) =>{
+    const answers = await loadAnswers();
+    const findAns = answers.find((answer) => answer.category === req.params.category);
+    findAns.keywords = req.body.keywords;
+    findAns.answer = req.body.answer;
+    await saveAnswers(answers);
+
+    res.json(findAns);
+})
+server.delete("/answers/:category", async (req,res)=>{
+    const answers = await loadAnswers();
+    const findans = answers.filter((answer) => answer.category !== req.params.category);
+    await saveAnswers(findans);
+    res.send();
+})
+
+server.delete("/messages", async (req,res)=>{
     await saveMessages([]);
-    await saveTopicStats({
-        navn: 0,
-        bosted: 0,
-        fritid: 0
-    })
-    res.redirect('/');
-});
+    res.send();
+})
 
 server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

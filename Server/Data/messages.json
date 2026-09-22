@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "type": "question",
+    "text": "Hvad er JavaScript?",
+    "createdAt": "2026-09-21T11:58:41.352Z"
+  },
+  {
+    "type": "answer",
+    "text": {
+      "answer": "JavaScript er et programmeringssprog, der blandt andet bruges til at gøre hjemmesider interaktive.",
+      "category": "navn"
+    },
+    "createdAt": "2026-09-21T11:58:41.352Z"
+  }
+]
